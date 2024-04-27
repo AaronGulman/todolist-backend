@@ -3,7 +3,7 @@ const express = require('express');
 const fs = require('fs');
 const path = require('path');
 const bodyParser = require('body-parser');
-const PORT=3001;
+const PORT= process.env.PORT || 3001 ;
 
 // 初始化待办任务列表，启动后保存在内存中
 let todos = [
@@ -61,7 +61,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
 // 后端服务路由
-app.get('/api/rule', (req, resp) => {
+app.get('/api/rule', (req,res) => {
   const { current = 1, pageSize = 10 } = req.query;
   const result = {
     data: todos,
@@ -70,7 +70,7 @@ app.get('/api/rule', (req, resp) => {
     pageSize,
     current: current || 1,
   };
-  resp.json(result);
+ res.json(result);
 });
 app.post('/api/rule', (req, res) => {
   const body = req.body;
@@ -127,14 +127,14 @@ app.post('/api/rule', (req, res) => {
   };
   res.json(result);
 })
-app.get('/api/currentUser', (req, resp) => {
-  resp.json(me);
+app.get('/api/currentUser', (req,res) => {
+ res.json(me);
 });
 
 // SPA单页应用，默认加载index.html
-app.all("/*", (req, resp) => {
-  resp.setHeader('Content-Type', 'text/html');
-  resp.send(fs.readFileSync('./public/index.html', 'utf8'));
+app.all("/*", (req,res) => {
+ res.setHeader('Content-Type', 'text/html');
+ res.send(fs.readFileSync('./public/index.html', 'utf8'));
 });
 
 // 监听PORT端口
